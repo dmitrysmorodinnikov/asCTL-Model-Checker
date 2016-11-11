@@ -13,7 +13,7 @@ import model.State;
  * @author keylor
  *
  */
-public interface SubsetCalculator {
+public interface SubsetCalculator {   
 	
 	public Set<State> getSat(StateFormula formula, Set<State> S);
 	
