@@ -19,15 +19,20 @@ import model.Transition;
 public class SimpleModelChecker implements ModelChecker {
 	
 	private DummySubsetCalculator satCalculator;
+	private ENFGenerator enfGenerator;
 	
 	public SimpleModelChecker(DummySubsetCalculator satCalculator){
 		this.satCalculator = satCalculator;
+		this.enfGenerator = new ENFGenerator();
 	}
 
     @Override
     public boolean check(Model model, StateFormula constraint, StateFormula query) {
+    	//Get the ENF form of the query
+    	StateFormula enfQuery = enfGenerator.getENF(query);
+    	
         //Get the set of states that satisfy the formula
-    	Set<State> sat = satCalculator.getSat(query, model.getStatesSet());
+    	Set<State> sat = satCalculator.getSat(enfQuery, model.getStatesSet());
     	//If all the initial states satisfy the formula, then the formula holds
     	return sat.containsAll(model.getInitialStates());
     }
@@ -93,10 +98,13 @@ public class SimpleModelChecker implements ModelChecker {
     	
     	System.out.println("This is a test with: " + and);
     	
-    	SimpleModelChecker checker = new SimpleModelChecker(calc);
+    	//ENFGenerator enf = new ENFGenerator();
+    	//System.out.println(enf.getENF(and));
     	
-    	boolean result = checker.check(model, null, and);
-    	System.out.println("FORMULA HOLDS: " + result);
+    	//SimpleModelChecker checker = new SimpleModelChecker(calc);
+    	
+    	//boolean result = checker.check(model, null, and);
+    	//System.out.println("FORMULA HOLDS: " + result);
     }
     
     //Testing
