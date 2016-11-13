@@ -3,7 +3,7 @@ package model;
 /**
  * 
  * */
-public class State {
+public class State implements Cloneable{
     private boolean init;
     private String name;
     private String [] label;
@@ -30,6 +30,11 @@ public class State {
      * */
     public String[] getLabel() {
 	return label;
+    }    
+    
+    @Override
+    public Object clone()throws CloneNotSupportedException {
+        return super.clone();
     }
 	
 }
