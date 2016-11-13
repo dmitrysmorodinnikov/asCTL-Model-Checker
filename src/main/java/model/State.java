@@ -36,5 +36,31 @@ public class State implements Cloneable{
     public Object clone()throws CloneNotSupportedException {
         return super.clone();
     }
+    
+    /** TODO: Setters created for testing only**/
+    public void setInit(boolean init){
+    	this.init = init;
+    }
+    
+    public void setName(String name){
+    	this.name = name;
+    }
+    
+    public void setLabel(String[] label){
+    	this.label = label;
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+    	//Two sets are equal if they share the same name
+    	if (obj instanceof State){
+    		return this.name.equals(((State) obj).name);
+    	}
+    	return false;
+    }
 	
+    @Override
+    public String toString(){
+    	return name;
+    }
 }

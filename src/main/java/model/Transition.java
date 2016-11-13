@@ -41,5 +41,16 @@ public class  Transition {
 	sb.append(this.target);
 	return sb.toString();
     }
+    
+    /** TODO: setters created for testing only **/
+    public void setSource(String source){
+    	this.source = source;
+    }
+    public void setTarget(String target){
+    	this.target = target;
+    }
+    public void setActions(String[] actions){
+    	this.actions = actions;
+    }
 	
 }
