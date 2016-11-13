@@ -28,7 +28,7 @@ public class ModelCheckerTest {
             StateFormula fairnessConstraint = new FormulaParser("src/test/resources/constraint1.json").parse();
             StateFormula query = new FormulaParser("src/test/resources/ctl1.json").parse();
 
-            ModelChecker mc = new SimpleModelChecker();
+            ModelChecker mc = new SimpleModelChecker(new SubsetCalculatorImpl());
 
             // TO IMPLEMENT
             // assertTrue(mc.check(model, fairnessConstraint, query));

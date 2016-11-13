@@ -18,9 +18,9 @@ import model.Transition;
 
 public class SimpleModelChecker implements ModelChecker {
 	
-	private DummySubsetCalculator satCalculator;
+	private SubsetCalculator satCalculator;
 	
-	public SimpleModelChecker(DummySubsetCalculator satCalculator){
+	public SimpleModelChecker(SubsetCalculator satCalculator){
 		this.satCalculator = satCalculator;
 	}
 
