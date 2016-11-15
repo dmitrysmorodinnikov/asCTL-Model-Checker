@@ -21,15 +21,20 @@ import model.Transition;
 public class SimpleModelChecker implements ModelChecker {
 	
 	private SubsetCalculator satCalculator;
+	private ENFGenerator enfGenerator;
 	
 	public SimpleModelChecker(SubsetCalculator satCalculator){
 		this.satCalculator = satCalculator;
+		this.enfGenerator = new ENFGenerator();
 	}
 
     @Override
     public boolean check(Model model, StateFormula constraint, StateFormula query) {
+    	//Get the ENF form of the query
+    	StateFormula enfQuery = enfGenerator.getENF(query);
+    	
         //Get the set of states that satisfy the formula
-    	Set<State> sat = satCalculator.getSat(query, model.getStatesSet());
+    	Set<State> sat = satCalculator.getSat(enfQuery, model.getStatesSet());
     	//If all the initial states satisfy the formula, then the formula holds
     	return sat.containsAll(model.getInitialStates());
     }
