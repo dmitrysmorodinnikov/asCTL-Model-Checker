@@ -26,8 +26,9 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 	private Model model;
 	private CollectionHelper collectionHelper;
 	
-	public SubsetCalculatorImpl() {
+	public SubsetCalculatorImpl(Model model) {
 		collectionHelper = new CollectionHelper();
+		this.model = model;
 	}
 	
 	@Override
