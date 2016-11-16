@@ -2,8 +2,10 @@ package model;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 
@@ -12,7 +14,7 @@ import com.google.gson.Gson;
  */
 public class Model {
 	
-	private Set<State> initialStates;
+	private Set<State> initialStates = new HashSet<State>();
     private State[] states;
     private Transition[] transitions;
     private Set<State> statesSet;
@@ -25,7 +27,6 @@ public class Model {
             ;
         }
         
-        model.initialStates = new HashSet<State>();
         for (State s : model.states){
         	if (s.isInit()){
         		model.initialStates.add(s);
@@ -76,6 +77,9 @@ public class Model {
 		this.statesSet = new HashSet<State>();
         for (State s : states){
         	statesSet.add(s);
+        	if (s.isInit() && !initialStates.contains(s)){
+        		initialStates.add(s);
+        	}
         }
 	}
 	
@@ -85,6 +89,18 @@ public class Model {
 	
 	public void setTransitions(Transition[] transitions){
 		this.transitions = transitions;
+	}
+	
+	public Set<State> getPostCollection(State state){
+		Set<String>postStrings = Arrays.asList(getTransitions())
+				.stream()
+				.filter(x->x.getSource().equals(state.getName()))
+				.map(x->x.getTarget())
+				.collect(Collectors.toSet());
+		Set<State>postStates = statesSet.stream()
+				.filter(x->postStrings.contains(x.getName()))
+				.collect(Collectors.toSet());
+		return postStates;
 	}
 
 }
