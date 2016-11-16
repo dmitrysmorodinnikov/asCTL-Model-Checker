@@ -49,7 +49,7 @@ public class SimpleModelChecker implements ModelChecker {
     	
     	try {
 			Model model = Model.parseModel("src/test/resources/models/model2.json");
-			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula2_9.json").parse();
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula0.json").parse();
 			boolean res = new SimpleModelChecker(new SubsetCalculatorImpl(model)).check(model, null, formula);
 			StateFormula f2 = formula;
 		} catch (IOException e) {

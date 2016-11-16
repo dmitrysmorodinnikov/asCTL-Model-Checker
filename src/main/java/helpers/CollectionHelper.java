@@ -1,6 +1,8 @@
 package helpers;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import model.State;
@@ -28,6 +30,23 @@ public class CollectionHelper {
         return list;
     }
     
+    public <T> List<T> intersection(List<T> list1, List<T> list2) {
+        List<T> list = new ArrayList<T>();
+
+        for (T t : list1) {
+            if(list2.contains(t)) {
+                list.add(t);
+            }
+        }
+
+        return list;
+    }
+    
+//    public Set<State> intersection(List<String> asList, List<String> actions) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+    
     public <T> Set<T> substraction(Set<T> list1, Set<T> list2) {
         Set<T> set = new HashSet<T>();  
         set.addAll(list1);
@@ -47,4 +66,6 @@ public class CollectionHelper {
 			}
         return clone;
     }
+
+	
 }
