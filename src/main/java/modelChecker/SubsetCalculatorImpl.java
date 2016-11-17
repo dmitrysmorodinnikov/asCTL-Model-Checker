@@ -115,6 +115,17 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		Set<State>leftStates = getSat(left, states);
 		Set<State>rightStates = getSat(right, states);
 		
+//		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
+//		return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
+//	}
+//	
+//	else if(!((Until)pathFormula).getLeftActions().isEmpty()){
+//		return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
+//	}
+//	else if(!((Until)pathFormula).getRightActions().isEmpty()){
+//		return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
+//	}
+		
 		Set<State>reducedStates = new HashSet<>(rightStates);
 		while(true){
 			Set<State>s = collectionHelper.substraction(leftStates, reducedStates);
@@ -130,22 +141,20 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 				break;
 			reducedStates.addAll(s);
 		}
-		
 		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
-			return getSatPrefixSuffixUntil(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
+			return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
 		}
 		
 		else if(!((Until)pathFormula).getLeftActions().isEmpty()){
-			return getSatPrefixUntil(reducedStates, ((Until)pathFormula).getLeftActions());
+			return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
 		}
 		else if(!((Until)pathFormula).getRightActions().isEmpty()){
-			return getSatSuffixUntil(reducedStates, ((Until)pathFormula).getRightActions());
+			return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
 		}
-		
 		return reducedStates;
 	}
 	
-	private Set<State>getSatPrefixUntil(Set<State>states, Set<String> actions){
+	private Set<State>getSatPrefix(Set<State>states, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
 		for(State state:states){
 			Set<Transition> incomingTransitions = getIncomingTransitions(state);			
@@ -163,7 +172,7 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return states;
 	}
 	
-	private Set<State>getSatSuffixUntil(Set<State>states, Set<String> actions){
+	private Set<State>getSatSuffix(Set<State>states, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
 		for(State state:states){
 			Set<Transition> outcomingTransitions = getOutcomingTransitions(state);			
@@ -179,15 +188,15 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return states;
 	}
 	
-	private Set<State>getSatPrefixSuffixUntil(Set<State>states, Set<String> leftActions, Set<String> rightActions){
-		states = getSatPrefixUntil(states, leftActions);
-		states = getSatSuffixUntil(states, rightActions);
+	private Set<State>getSatPrefixSuffix(Set<State>states, Set<String> leftActions, Set<String> rightActions){
+		states = getSatPrefix(states, leftActions);
+		states = getSatSuffix(states, rightActions);
 		return states;
 	}
 	
 	private Set<State>getSatExistsAlways(ThereExists formula, Set<State> states){
 		PathFormula pathFormula = formula.pathFormula;
-		if(!(pathFormula instanceof Next))
+		if(!(pathFormula instanceof Always))
 			return null;
 		StateFormula f = ((Always)pathFormula).stateFormula;
 		Set<State>fStates = getSat(f, states);		
@@ -196,15 +205,15 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 			Set<State>s = new HashSet<>(reducedStates);
 			Set<State>statesToRemove = new HashSet<>();
 			for(State state:s){
-				Set<State>posts = getPostCollection(state, states);
+				Set<State>posts = getPostCollection(state, states);				
 				posts.retainAll(reducedStates);
 				if(posts.isEmpty())
 					statesToRemove.add(state);
-			}
-			s.removeAll(statesToRemove);
-			if(s.isEmpty())
+			}			
+			if(statesToRemove.size() == 0){
 				break;
-			reducedStates.removeAll(s);
+			}				
+			reducedStates.removeAll(statesToRemove);
 		}
 		return reducedStates;
 	}
