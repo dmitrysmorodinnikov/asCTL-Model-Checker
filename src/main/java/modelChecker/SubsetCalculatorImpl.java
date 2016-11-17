@@ -134,7 +134,7 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 	
 	private Set<State>getSatExistsAlways(ThereExists formula, Set<State> states){
 		PathFormula pathFormula = formula.pathFormula;
-		if(!(pathFormula instanceof Next))
+		if(!(pathFormula instanceof Always))
 			return null;
 		StateFormula f = ((Always)pathFormula).stateFormula;
 		Set<State>fStates = getSat(f, states);		

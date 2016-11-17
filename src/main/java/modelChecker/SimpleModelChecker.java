@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import formula.FormulaParser;
+import formula.stateFormula.And;
 import formula.stateFormula.StateFormula;
 import model.Model;
 import model.State;
@@ -23,8 +24,14 @@ public class SimpleModelChecker implements ModelChecker {
 
     @Override
     public boolean check(Model model, StateFormula constraint, StateFormula query) {
+    	
+    	StateFormula finalQuery = query; 
+    	if (constraint != null){
+    		finalQuery = new And(constraint, query);
+    	}
+    	
     	//Get the ENF form of the query
-    	StateFormula enfQuery = enfGenerator.getENF(query);
+    	StateFormula enfQuery = enfGenerator.getENF(finalQuery);
     	System.out.println("ENF Query: " + enfQuery);
     	
         //Get the set of states that satisfy the formula
@@ -51,8 +58,8 @@ public class SimpleModelChecker implements ModelChecker {
     public static void main(String[] args){
     	
     	try {
-			Model model = Model.parseModel("src/test/resources/models/model3.json");
-			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula3_1.json").parse();
+			Model model = Model.parseModel("src/test/resources/models/modelk.json");
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formulak_1.json").parse();
 			SimpleModelChecker modelChecker = new SimpleModelChecker(new SubsetCalculatorImpl(model)); 
 			boolean res = modelChecker.check(model, null, formula);
 			System.out.println("RES: " + res);

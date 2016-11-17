@@ -26,7 +26,7 @@
             "label": ["a"]
         },
         {
-            "init": false,
+            "init": true,
             "name": "s6",
             "label": ["a"]
         }
@@ -55,6 +55,16 @@
         {
             "source": "s6",
             "target": "s3",
+            "actions": [""]
+        },
+        {
+            "source": "s4",
+            "target": "s4",
+            "actions": [""]
+        },
+        {
+            "source": "s5",
+            "target": "s5",
             "actions": [""]
         }
     ]
