@@ -46,20 +46,21 @@ public class Node {
 	}
 	
 	public String toString(){
-		String res = "";
-		if (state.isInit()){
-			res+="Initial ";
-		}
-		res+=  "Node: " + state;
-		res+= ". Parents:";
-		for (Edge e : edgesToThis){
-			res+=" " + e.getFrom().getState();
-		}
-		res+= ". Children:";
-		for (Edge e : edgesFromThis){
-			res+=" " + e.getTo().getState();
-		}
-		return res;
+		return state.toString();
+//		String res = "";
+//		if (state.isInit()){
+//			res+="Initial ";
+//		}
+//		res+=  "Node: " + state;
+//		res+= ". Parents:";
+//		for (Edge e : edgesToThis){
+//			res+=" " + e.getFrom().getState();
+//		}
+//		res+= ". Children:";
+//		for (Edge e : edgesFromThis){
+//			res+=" " + e.getTo().getState();
+//		}
+//		return res;
 	}
 
 	public boolean isVisited() {

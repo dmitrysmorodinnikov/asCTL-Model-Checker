@@ -13,7 +13,7 @@
         {
             "init": false,
             "name": "s3",
-            "label": ["a"]
+            "label": ["b"]
         },
         {
             "init": false,
@@ -23,7 +23,7 @@
         {
             "init": false,
             "name": "s5",
-            "label": ["a"]
+            "label": ["b"]
         },
         {
             "init": true,
@@ -58,13 +58,8 @@
             "actions": [""]
         },
         {
-            "source": "s4",
-            "target": "s4",
-            "actions": [""]
-        },
-        {
             "source": "s5",
-            "target": "s5",
+            "target": "s3",
             "actions": [""]
         }
     ]

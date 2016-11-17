@@ -61,7 +61,9 @@ public class Graph {
 		System.out.println("$$$$$$$$$$$$$$");
 	}
 
-	public void getUntilCounterexample(Set<State> terminalCounterexStates) {
+	public ArrayList<String> getUntilCounterexample(Set<State> terminalCounterexStates) {
+		
+		ArrayList<String> result = new ArrayList<String>();
 		//For each of the initial states
 		for(Node initialNode : initialNodes){
 			//Create stacks, mark all as not visited
@@ -75,7 +77,8 @@ public class Graph {
 			//If there are not children from the initial state, check if it belongs to terminalCounterexStates and return it if it is
 			if (initialNode.getChildren().size() == 0 && terminalCounterexStates.contains(initialNode.getState())){
 				System.out.println("COUNTEREXAMPLE IN INITIAL STATE: " + initialNode.getState());
-				return;
+				result.add(initialNode.getState().getName());
+				return result;
 			}
 			
 			//Add the initial nodes to expand
@@ -92,7 +95,7 @@ public class Graph {
 				//Set origin as visited
 				expandedEdge.getFrom().setVisited(true);
 				//If the top of the stack path is different than my current origin
-				while (!(stackPath.peek() instanceof Node) && 
+				while (!(stackPath.peek() instanceof Node) || 
 						!((Node) stackPath.peek()).getState().equals(expandedEdge.getFrom().getState())){
 					//Remove elements from the path until the origin is on top. Mark as not visited those that are taken out
 					Object pop = stackPath.pop();
@@ -106,6 +109,7 @@ public class Graph {
 				stackPath.add(expandedEdge.getTo());
 				
 				boolean counterexFound = false;
+				boolean loopFound = false;
 				
 				//If my destination is terminal and is in terminalCounterexStates, then we have a counter example. (return the path stack)
 				if (expandedEdge.getTo().getChildren().size() == 0 && terminalCounterexStates.contains(expandedEdge.getTo().getState())){
@@ -116,6 +120,7 @@ public class Graph {
 				//If my destination is already visited, we have a loop, and a counter example. (return the path stack)
 				if (expandedEdge.getTo().isVisited()){
 					System.out.println("COUNTEREXAMPLE FOUND BY LOOP");
+					loopFound = true;
 					counterexFound = true;
 				}
 				
@@ -123,13 +128,18 @@ public class Graph {
 					while(!stackPath.isEmpty()){
 						Object pop = stackPath.pop();
 						if (pop instanceof Node){
+							result.add(0, ((Node) pop).getState().getName());
 							System.out.println(((Node) pop).getState());
 						}
 						else {
+							result.add(0, ((Edge) pop).getActionsString());
 							System.out.println(((Edge) pop));
 						}
 					}
-					return;
+					if (loopFound){
+						result.add("...");
+					}
+					return result;
 				}
 				else {
 					//If not, add my destination's children transitions to the stackExpand
@@ -143,6 +153,7 @@ public class Graph {
 			} while (!stackExpand.isEmpty());
 			
 		}
+		return null;
 	}
 	
 }

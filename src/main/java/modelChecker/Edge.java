@@ -39,6 +39,18 @@ public class Edge {
 		return actions;
 	}
 	
+	public String getActionsString(){
+		String res = "[";
+		for(int i = 0; i < actions.length; i++){
+			res+=actions[i];
+			if (i != actions.length - 1){
+				res+=",";
+			}
+		}
+		res+="]";
+		return res;
+	}
+	
 	public void setActions(String[] actions) {
 		this.actions = actions;
 	}

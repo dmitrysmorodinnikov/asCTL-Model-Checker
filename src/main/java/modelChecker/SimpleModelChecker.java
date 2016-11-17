@@ -19,11 +19,13 @@ public class SimpleModelChecker implements ModelChecker {
 	public SimpleModelChecker(SubsetCalculator satCalculator){
 		this.satCalculator = satCalculator;
 		this.enfGenerator = new ENFGenerator();
-		this.traceGenerator = new TraceGenerator(satCalculator);
+		this.traceGenerator = new TraceGenerator(satCalculator, enfGenerator);
 	}
 
     @Override
     public boolean check(Model model, StateFormula constraint, StateFormula query) {
+    	
+    	model.validate();
     	
     	StateFormula finalQuery = query; 
     	if (constraint != null){
@@ -39,7 +41,7 @@ public class SimpleModelChecker implements ModelChecker {
     	
     	boolean result = sat.containsAll(model.getInitialStates());
     	if (!result){
-    		trace = traceGenerator.getCounterExample(model, constraint, enfQuery, sat);
+    		trace = traceGenerator.getCounterExample(model, query, enfQuery, sat);
     	}
     	
     	//If all the initial states satisfy the formula, then the formula holds

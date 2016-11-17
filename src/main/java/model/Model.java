@@ -2,8 +2,10 @@ package model;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -101,6 +103,26 @@ public class Model {
 				.filter(x->postStrings.contains(x.getName()))
 				.collect(Collectors.toSet());
 		return postStates;
+	}
+	
+	/**
+	 * Validates that there are not final states. If one is found, 
+	 * then a new transition to itself is added
+	 */
+	public void validate(){
+		ArrayList<Transition> tr = new ArrayList<Transition>();
+		tr.addAll(Arrays.asList(transitions));
+		for (State s : states){
+			if (getPostCollection(s).isEmpty()){
+				Transition newTransition = new Transition();
+				newTransition.setActions(new String[]{});
+				newTransition.setSource(s.getName());
+				newTransition.setTarget(s.getName());
+				System.out.println("Created Transition: " + newTransition);
+				tr.add(newTransition);
+			}
+		}
+		this.transitions = tr.toArray(new Transition[tr.size()]);
 	}
 
 }
