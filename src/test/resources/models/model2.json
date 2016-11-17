@@ -20,12 +20,12 @@
 		{
 			"source": "s1",
 			"target": "s2",
-			"actions": [""]
+			"actions": ["act1"]
 		},
 			{
 			"source": "s2",
 			"target": "s3",
-			"actions": [""]
+			"actions": ["act1"]
 		}	 		
 	]
 }

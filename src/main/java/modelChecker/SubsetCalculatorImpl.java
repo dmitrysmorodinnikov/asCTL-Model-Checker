@@ -1,5 +1,6 @@
 package modelChecker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -114,6 +115,17 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		Set<State>leftStates = getSat(left, states);
 		Set<State>rightStates = getSat(right, states);
 		
+//		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
+//		return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
+//	}
+//	
+//	else if(!((Until)pathFormula).getLeftActions().isEmpty()){
+//		return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
+//	}
+//	else if(!((Until)pathFormula).getRightActions().isEmpty()){
+//		return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
+//	}
+		
 		Set<State>reducedStates = new HashSet<>(rightStates);
 		while(true){
 			Set<State>s = collectionHelper.substraction(leftStates, reducedStates);
@@ -129,7 +141,57 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 				break;
 			reducedStates.addAll(s);
 		}
+		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
+			return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
+		}
+		
+		else if(!((Until)pathFormula).getLeftActions().isEmpty()){
+			return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
+		}
+		else if(!((Until)pathFormula).getRightActions().isEmpty()){
+			return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
+		}
 		return reducedStates;
+	}
+	
+	private Set<State>getSatPrefix(Set<State>states, Set<String> actions){
+		Set<State>statesToRemove = new HashSet<>();
+		for(State state:states){
+			Set<Transition> incomingTransitions = getIncomingTransitions(state);			
+			for(Transition tr:incomingTransitions){
+				boolean isEmpty = collectionHelper
+						.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), actions)
+						.isEmpty();
+				if(isEmpty){
+					statesToRemove.add(state);
+					break;
+				}					
+			}			
+		}
+		states.removeAll(statesToRemove);
+		return states;
+	}
+	
+	private Set<State>getSatSuffix(Set<State>states, Set<String> actions){
+		Set<State>statesToRemove = new HashSet<>();
+		for(State state:states){
+			Set<Transition> outcomingTransitions = getOutcomingTransitions(state);			
+			for(Transition tr:outcomingTransitions){
+				boolean isEmpty = collectionHelper.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), actions).isEmpty();
+				if(isEmpty){
+					statesToRemove.add(state);
+					break;
+				}					
+			}			
+		}
+		states.removeAll(statesToRemove);
+		return states;
+	}
+	
+	private Set<State>getSatPrefixSuffix(Set<State>states, Set<String> leftActions, Set<String> rightActions){
+		states = getSatPrefix(states, leftActions);
+		states = getSatSuffix(states, rightActions);
+		return states;
 	}
 	
 	private Set<State>getSatExistsAlways(ThereExists formula, Set<State> states){
@@ -143,15 +205,15 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 			Set<State>s = new HashSet<>(reducedStates);
 			Set<State>statesToRemove = new HashSet<>();
 			for(State state:s){
-				Set<State>posts = getPostCollection(state, states);
+				Set<State>posts = getPostCollection(state, states);				
 				posts.retainAll(reducedStates);
 				if(posts.isEmpty())
 					statesToRemove.add(state);
-			}
-			s.removeAll(statesToRemove);
-			if(s.isEmpty())
+			}			
+			if(statesToRemove.size() == 0){
 				break;
-			reducedStates.removeAll(s);
+			}				
+			reducedStates.removeAll(statesToRemove);
 		}
 		return reducedStates;
 	}
@@ -166,5 +228,19 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 				.filter(x->postStrings.contains(x.getName()))
 				.collect(Collectors.toSet());
 		return postStates;
+	}
+	
+	private Set<Transition>getIncomingTransitions(State state){
+		return Arrays.asList(model.getTransitions())
+				.stream()
+				.filter(x->x.getTarget().equals(state.getName()))										
+				.collect(Collectors.toSet());
+	}
+	
+	private Set<Transition>getOutcomingTransitions(State state){
+		return Arrays.asList(model.getTransitions())
+				.stream()
+				.filter(x->x.getSource().equals(state.getName()))										
+				.collect(Collectors.toSet());
 	}
 }

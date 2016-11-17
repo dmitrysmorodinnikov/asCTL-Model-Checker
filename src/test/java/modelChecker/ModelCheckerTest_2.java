@@ -156,4 +156,37 @@ public class ModelCheckerTest_2 {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void test2_10(){
+		try {		
+			Model model = Model.parseModel("src/test/resources/models/model2.json");
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula2_10.json").parse();
+			SubsetCalculator calculator = new SubsetCalculatorImpl(model);
+			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
+			boolean actualOuput = modelCheker.check(model, null, formula);
+			assertTrue(actualOuput);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void test2_11(){
+		try {		
+			Model model = Model.parseModel("src/test/resources/models/model2.json");
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula2_11.json").parse();
+			SubsetCalculator calculator = new SubsetCalculatorImpl(model);
+			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
+			boolean actualOuput = modelCheker.check(model, null, formula);
+			assertTrue(actualOuput);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }
