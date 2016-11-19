@@ -193,7 +193,7 @@ public class ENFGenerator {
 		}
 		else if (formula.pathFormula instanceof Always){
 			Always originalAlways = (Always) formula.pathFormula;
-			Until newUntil = new Until(new BoolProp(true), getENF(originalAlways.stateFormula),
+			Until newUntil = new Until(new BoolProp(true), new Not(getENF(originalAlways.stateFormula)),
 					new HashSet<String>(), originalAlways.getActions());
 			return new Not(new ThereExists(newUntil));
 		}
