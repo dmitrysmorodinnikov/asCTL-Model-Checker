@@ -1,0 +1,5 @@
+{
+	"formula": "((AG(AF c1)) && (AG(AF c2)))",	
+	"q": ["act1"],
+	"p": ["act1"]
+}
