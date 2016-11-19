@@ -21,7 +21,11 @@ import helpers.CollectionHelper;
 import model.Model;
 import model.State;
 import model.Transition;
-
+/**
+ * 
+ * Computation of the satisfaction set
+ *
+ */
 public class SubsetCalculatorImpl implements SubsetCalculator {
 
 	private Model model;
@@ -32,6 +36,9 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		this.model = model;
 	}
 	
+	/**
+	 * sat computation of the StateFormula
+	 */
 	@Override
 	public Set<State> getSat(StateFormula formula, Set<State> states) {		
 		Set<State> resultStates;
@@ -63,16 +70,34 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return resultStates;
 	}
 	
+	/**
+	 * sat computation for boolean propositions
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatBool(BoolProp formula, Set<State> states){
 		return states;
 	}
 	
+	/**
+	 * sat computation for Atomic propositions
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatAtomicProp(AtomicProp formula, Set<State> states){		
 		Set<State>reducedStates = states.stream()
 				.filter(x->Arrays.asList(x.getLabel()).contains(formula.label)).collect(Collectors.toSet());		
 		return reducedStates;
 	}
 	
+	/**
+	 * sat computation for AND formula
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatAnd(And formula, Set<State> states){
 		Set<State>leftStates = getSat(formula.left, states);
 		Set<State>rightStates = getSat(formula.right, states);
@@ -82,6 +107,12 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return reducedStates;
 	}	
 	
+	/**
+	 * sat computation for NOT formula
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatNot(Not formula, Set<State> states){
 		Set<State>fStates = getSat(formula.stateFormula, states);
 		Set<State>copy = new HashSet<>(states);
@@ -89,6 +120,12 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return copy;
 	}
 	
+	/**
+	 * sat computation for Exists(Next) formula
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatExistsNext(ThereExists formula, Set<State> states){
 		Set<State>reducedStates = new HashSet<>();
 		PathFormula pathFormula = formula.pathFormula;
@@ -96,6 +133,9 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 			return null;
 		StateFormula f = ((Next)pathFormula).stateFormula;
 		Set<State>fStates = getSat(f, states);
+		if(!((Next)pathFormula).getActions().isEmpty()){
+			fStates = getSatPrefix(fStates, ((Next)pathFormula).getActions());
+		}
 		for(State state:states){
 			Set<State>posts = getPostCollection(state, states);
 			posts.retainAll(fStates);
@@ -105,6 +145,12 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return reducedStates;
 	}
 	
+	/**
+	 * sat computation for Exists(Until) formula
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatExistsUntil(ThereExists formula, Set<State> states){
 		
 		PathFormula pathFormula = formula.pathFormula;
@@ -113,18 +159,14 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		StateFormula left = ((Until)pathFormula).left;
 		StateFormula right = ((Until)pathFormula).right;
 		Set<State>leftStates = getSat(left, states);
-		Set<State>rightStates = getSat(right, states);
+		Set<State>rightStates = getSat(right, states);	
 		
-//		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
-//		return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
-//	}
-//	
-//	else if(!((Until)pathFormula).getLeftActions().isEmpty()){
-//		return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
-//	}
-//	else if(!((Until)pathFormula).getRightActions().isEmpty()){
-//		return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
-//	}
+		if(!((Until)pathFormula).getRightActions().isEmpty()){
+			rightStates = getSatPrefix(rightStates, ((Until)pathFormula).getRightActions());
+		}		
+		if(!((Until)pathFormula).getLeftActions().isEmpty()){
+			leftStates = getSatSuffix(leftStates,rightStates, ((Until)pathFormula).getLeftActions());			
+		}
 		
 		Set<State>reducedStates = new HashSet<>(rightStates);
 		while(true){
@@ -141,65 +183,85 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 				break;
 			reducedStates.addAll(s);
 		}
-		if(!((Until)pathFormula).getLeftActions().isEmpty() && (!((Until)pathFormula).getRightActions().isEmpty())){
-			return getSatPrefixSuffix(reducedStates, ((Until)pathFormula).getLeftActions(),((Until)pathFormula).getRightActions());
-		}
 		
-		else if(!((Until)pathFormula).getLeftActions().isEmpty()){
-			return getSatPrefix(reducedStates, ((Until)pathFormula).getLeftActions());
-		}
-		else if(!((Until)pathFormula).getRightActions().isEmpty()){
-			return getSatSuffix(reducedStates, ((Until)pathFormula).getRightActions());
-		}
 		return reducedStates;
 	}
 	
+	/**
+	 * sat computation for (a)F, where (a) is a set of actions, F - path formula
+	 * @param states
+	 * @param actions
+	 * @return
+	 */
 	private Set<State>getSatPrefix(Set<State>states, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
 		for(State state:states){
-			Set<Transition> incomingTransitions = getIncomingTransitions(state);			
-			for(Transition tr:incomingTransitions){
+			int cnt = 0;
+			Set<Transition> incomingTransitions = getIncomingTransitions(state)
+					.stream().filter(x->!x.getSource().equals(x.getTarget()))
+					.collect(Collectors.toSet());
+			if(incomingTransitions.isEmpty())
+				continue;
+			for(Transition tr:incomingTransitions){				
 				boolean isEmpty = collectionHelper
 						.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), actions)
 						.isEmpty();
 				if(isEmpty){
-					statesToRemove.add(state);
-					break;
-				}					
-			}			
+					cnt++;					
+				}				
+			}
+			if(cnt == incomingTransitions.size())
+				statesToRemove.add(state);
 		}
 		states.removeAll(statesToRemove);
 		return states;
 	}
 	
-	private Set<State>getSatSuffix(Set<State>states, Set<String> actions){
+	/**
+	 * sat computation for F(a), where (a) is a set of actions, F - path formula
+	 * @param states
+	 * @param actions
+	 * @return
+	 */
+	private Set<State>getSatSuffix(Set<State>leftStates,Set<State>rightStates, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
-		for(State state:states){
-			Set<Transition> outcomingTransitions = getOutcomingTransitions(state);			
+		for(State state:leftStates){
+			int cnt=0;
+			Set<Transition> outcomingTransitions = getOutcomingTransitions(state)
+					.stream().filter(x->!x.getSource().equals(x.getTarget()))
+					.collect(Collectors.toSet());
+			if(outcomingTransitions.isEmpty())
+				continue;
 			for(Transition tr:outcomingTransitions){
+				boolean nextIsFromRightStates = rightStates.stream().anyMatch(x->x.getName().equals(tr.getTarget()));
+				
 				boolean isEmpty = collectionHelper.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), actions).isEmpty();
-				if(isEmpty){
-					statesToRemove.add(state);
-					break;
+				if(isEmpty && !nextIsFromRightStates){
+					cnt++;
 				}					
 			}			
-		}
-		states.removeAll(statesToRemove);
-		return states;
+			if(cnt == outcomingTransitions.size())
+				statesToRemove.add(state);
+		}		
+		leftStates.removeAll(statesToRemove);
+		return leftStates;
 	}
 	
-	private Set<State>getSatPrefixSuffix(Set<State>states, Set<String> leftActions, Set<String> rightActions){
-		states = getSatPrefix(states, leftActions);
-		states = getSatSuffix(states, rightActions);
-		return states;
-	}
-	
+	/**
+	 * sat computation for Exists(Always)formula
+	 * @param formula
+	 * @param states
+	 * @return
+	 */
 	private Set<State>getSatExistsAlways(ThereExists formula, Set<State> states){
 		PathFormula pathFormula = formula.pathFormula;
 		if(!(pathFormula instanceof Always))
 			return null;
 		StateFormula f = ((Always)pathFormula).stateFormula;
-		Set<State>fStates = getSat(f, states);		
+		Set<State>fStates = getSat(f, states);	
+		if(!((Always)pathFormula).getActions().isEmpty()){
+			fStates = getSatPrefix(fStates, ((Always)pathFormula).getActions());
+		}
 		Set<State>reducedStates = new HashSet<>(fStates);
 		while(true){
 			Set<State>s = new HashSet<>(reducedStates);
@@ -218,6 +280,12 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return reducedStates;
 	}
 	
+	/**
+	 * get all successors of the state
+	 * @param state
+	 * @param states
+	 * @return
+	 */
 	private Set<State> getPostCollection(State state, Set<State> states){
 		Set<String>postStrings = Arrays.asList(model.getTransitions())
 				.stream()
@@ -230,6 +298,11 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		return postStates;
 	}
 	
+	/**
+	 * get all incoming transitions of the state
+	 * @param state
+	 * @return
+	 */
 	private Set<Transition>getIncomingTransitions(State state){
 		return Arrays.asList(model.getTransitions())
 				.stream()
@@ -237,6 +310,11 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 				.collect(Collectors.toSet());
 	}
 	
+	/**
+	 * get all outcoming transitions of the state
+	 * @param state
+	 * @return
+	 */
 	private Set<Transition>getOutcomingTransitions(State state){
 		return Arrays.asList(model.getTransitions())
 				.stream()
