@@ -23,10 +23,6 @@ public class Model {
     public static Model parseModel(String filePath) throws IOException {
         Gson gson = new Gson();
         Model model = gson.fromJson(new FileReader(filePath), Model.class);
-        for (Transition t : model.transitions) {
-            System.out.println(t);
-            ;
-        }
         
         for (State s : model.states){
         	if (s.isInit()){
@@ -68,7 +64,6 @@ public class Model {
 		return initialStates;
 	}
 	
-	/** TODO: setters created for testing only*/
 	public void setInitialStates(Set<State> initialStates){
 		this.initialStates = initialStates;
 	}
@@ -117,7 +112,7 @@ public class Model {
 				newTransition.setActions(new String[]{});
 				newTransition.setSource(s.getName());
 				newTransition.setTarget(s.getName());
-				System.out.println("Created Transition: " + newTransition);
+				//System.out.println("Created Transition: " + newTransition);
 				tr.add(newTransition);
 			}
 		}

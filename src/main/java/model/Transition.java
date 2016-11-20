@@ -35,14 +35,14 @@ public class  Transition {
 	
     @Override
     public String toString() {
-	StringBuilder sb = new StringBuilder();
-	sb.append(this.source+"-");
-	sb.append(Arrays.toString(this.actions)+"-");
-	sb.append(this.target);
-	return sb.toString();
+    	return Arrays.toString(this.actions);
+	//StringBuilder sb = new StringBuilder();
+	//sb.append(this.source+"-");
+	//sb.append(Arrays.toString(this.actions)+"-");
+	//sb.append(this.target);
+	//return sb.toString();
     }
     
-    /** TODO: setters created for testing only **/
     public void setSource(String source){
     	this.source = source;
     }

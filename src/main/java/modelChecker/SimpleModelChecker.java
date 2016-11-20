@@ -34,7 +34,7 @@ public class SimpleModelChecker implements ModelChecker {
     	
     	//Get the ENF form of the query
     	StateFormula enfQuery = enfGenerator.getENF(finalQuery);
-    	System.out.println("ENF Query: " + enfQuery);
+    	//System.out.println("ENF Query: " + enfQuery);
     	
         //Get the set of states that satisfy the formula
     	Set<State> sat = satCalculator.getSat(enfQuery, model.getStatesSet());
@@ -57,14 +57,23 @@ public class SimpleModelChecker implements ModelChecker {
         return trace;
     }
     
+    public String getTraceString(){
+    	StringBuilder sb = new StringBuilder();
+    	for(String s : trace){
+    		sb.append(" -> ");
+    		sb.append(s);
+    	}
+        return sb.toString();
+    }
+    
+    
     public static void main(String[] args){
     	
     	try {
-			Model model = Model.parseModel("src/test/resources/models/modelk.json");
-			StateFormula formula = new FormulaParser("src/test/resources/formulas/formulak_1.json").parse();
+			Model model = Model.parseModel("src/test/resources/models/model4.json");
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula4_6.json").parse();
 			SimpleModelChecker modelChecker = new SimpleModelChecker(new SubsetCalculatorImpl(model)); 
 			boolean res = modelChecker.check(model, null, formula);
-			System.out.println("RES: " + res);
 			
 			if (res == false){
 				modelChecker.getTrace();

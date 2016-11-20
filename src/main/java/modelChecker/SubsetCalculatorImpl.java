@@ -193,7 +193,7 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 	 * @param actions
 	 * @return
 	 */
-	private Set<State>getSatPrefix(Set<State>states, Set<String> actions){
+	public Set<State>getSatPrefix(Set<State>states, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
 		for(State state:states){
 			int cnt = 0;
@@ -223,7 +223,7 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 	 * @param actions
 	 * @return
 	 */
-	private Set<State>getSatSuffix(Set<State>leftStates,Set<State>rightStates, Set<String> actions){
+	public Set<State>getSatSuffix(Set<State>leftStates,Set<State>rightStates, Set<String> actions){
 		Set<State>statesToRemove = new HashSet<>();
 		for(State state:leftStates){
 			int cnt=0;

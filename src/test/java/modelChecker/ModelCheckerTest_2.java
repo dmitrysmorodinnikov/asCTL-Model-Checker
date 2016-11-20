@@ -38,6 +38,8 @@ public class ModelCheckerTest_2 {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
+			System.out.print("test2_2 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -86,6 +88,8 @@ public class ModelCheckerTest_2 {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
+			System.out.print("test2_5 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -102,6 +106,8 @@ public class ModelCheckerTest_2 {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
+			System.out.print("test2_6 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -118,6 +124,8 @@ public class ModelCheckerTest_2 {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
+			System.out.print("test2_7 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -134,6 +142,8 @@ public class ModelCheckerTest_2 {
 //			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 //			boolean actualOuput = modelCheker.check(model, null, formula);
 //			assertFalse(actualOuput);
+//			System.out.print("test2_8 Counterexample: ");
+//			System.out.println(modelCheker.getTraceString());
 //			
 //		} catch (IOException e) {
 //			// TODO Auto-generated catch block

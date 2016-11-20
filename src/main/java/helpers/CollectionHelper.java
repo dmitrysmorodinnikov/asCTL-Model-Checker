@@ -42,6 +42,19 @@ public class CollectionHelper {
         return list;
     }
     
+    /**
+     * Checks if at least one of the elements in array belongs to the set
+     * @param set
+     * @param array
+     * @return
+     */
+    public <T> boolean contains(T[] array, Set<T> set){
+    	for (T key : array){
+    		if (set.contains(key)) return true;
+    	}
+    	return false;
+    }
+    
 //    public Set<State> intersection(List<String> asList, List<String> actions) {
 //		// TODO Auto-generated method stub
 //		return null;

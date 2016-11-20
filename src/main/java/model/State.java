@@ -37,7 +37,6 @@ public class State implements Cloneable{
         return super.clone();
     }
     
-    /** TODO: Setters created for testing only**/
     public void setInit(boolean init){
     	this.init = init;
     }
