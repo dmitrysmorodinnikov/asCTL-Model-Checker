@@ -70,8 +70,8 @@ public class SimpleModelChecker implements ModelChecker {
     public static void main(String[] args){
     	
     	try {
-			Model model = Model.parseModel("src/test/resources/models/model4.json");
-			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula4_6.json").parse();
+    		Model model = Model.parseModel("src/test/resources/models/model_mutual.json");
+			StateFormula formula = new FormulaParser("src/test/resources/formulas/formula_mutual_7.json").parse();
 			SimpleModelChecker modelChecker = new SimpleModelChecker(new SubsetCalculatorImpl(model)); 
 			boolean res = modelChecker.check(model, null, formula);
 			
