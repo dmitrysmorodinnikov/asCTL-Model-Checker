@@ -159,12 +159,9 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 		StateFormula left = ((Until)pathFormula).left;
 		StateFormula right = ((Until)pathFormula).right;
 		Set<State>leftStates = getSat(left, states);
-		Set<State>rightStates = getSat(right, states);	
-		
-//		Set<String>r = ((Until)pathFormula).getRightActions();
-//		Set<String>l = ((Until)pathFormula).getLeftActions();
-//		boolean rEpty = r.isEmpty();
-//		boolean lEmpty = l.isEmpty();
+		Set<State>rightStates = getSat(right, states);
+		Set<String>rightActions = ((Until)pathFormula).getRightActions();
+		Set<String>leftActions = ((Until)pathFormula).getLeftActions();
 		
 		if(!((Until)pathFormula).getRightActions().isEmpty()){
 			rightStates = getSatPrefix(rightStates, ((Until)pathFormula).getRightActions());			
@@ -179,51 +176,47 @@ public class SubsetCalculatorImpl implements SubsetCalculator {
 			Set<State>statesToRemove = new HashSet<>();
 			for(State state:s){
 				Set<State>posts = getPostCollection(state, states);
-//				Set<State>postsToRemove = new HashSet<>();
-//				if(rightStates.contains(state) && !((Until)pathFormula).getRightActions().isEmpty()){
-//					Set<String>rightActions = ((Until)pathFormula).getRightActions();					
-//					for(State p:posts){
-//						int cnt = 0;
-//						Set<Transition> incomingTransitions = getIncomingTransitions(p)
-//								.stream().filter(x->!x.getSource().equals(x.getTarget()))
-//								.collect(Collectors.toSet());
-//						if(incomingTransitions.isEmpty())
-//							continue;
-//						for(Transition tr:incomingTransitions){				
-//							boolean isEmpty = collectionHelper
-//									.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), rightActions)
-//									.isEmpty();
-//							if(isEmpty){
-//								cnt++;					
-//							}				
-//						}
-//						if(cnt == incomingTransitions.size())
-//							postsToRemove.add(p);
-//					}
-//				}
-//				
-//				if(leftStates.contains(state) && !((Until)pathFormula).getLeftActions().isEmpty()){
-//					Set<String>leftActions = ((Until)pathFormula).getLeftActions();					
-//					for(State p:posts){
-//						int cnt = 0;
-//						Set<Transition> incomingTransitions = getIncomingTransitions(p)
-//								.stream().filter(x->!x.getSource().equals(x.getTarget()))
-//								.collect(Collectors.toSet());
-//						if(incomingTransitions.isEmpty())
-//							continue;
-//						for(Transition tr:incomingTransitions){				
-//							boolean isEmpty = collectionHelper
-//									.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), leftActions)
-//									.isEmpty();
-//							if(isEmpty){
-//								cnt++;					
-//							}				
-//						}
-//						if(cnt == incomingTransitions.size())
-//							postsToRemove.add(p);
-//					}
-//				}
-//				posts.removeAll(postsToRemove);
+				Set<State>postsToRemove = new HashSet<>();					
+				for(State p:posts){
+					if(rightStates.contains(p)&& !rightActions.isEmpty()){
+						int cnt = 0;
+						Set<Transition> incomingTransitions = getIncomingTransitions(p)
+								.stream().filter(x->x.getSource().equals(state.getName()) && x.getTarget().equals(p.getName()))
+								.collect(Collectors.toSet());
+						if(incomingTransitions.isEmpty())
+							continue;
+						for(Transition tr:incomingTransitions){				
+							boolean isEmpty = collectionHelper
+									.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), rightActions)
+									.isEmpty();
+							if(isEmpty){
+								cnt++;					
+							}				
+						}
+						if(cnt == incomingTransitions.size())
+							postsToRemove.add(p);
+					}
+					if(leftStates.contains(p)&& !leftActions.isEmpty()){
+						int cnt = 0;
+						Set<Transition> incomingTransitions = getIncomingTransitions(p)
+								.stream().filter(x->x.getSource().equals(state.getName()) && x.getTarget().equals(p.getName()))
+								.collect(Collectors.toSet());
+						if(incomingTransitions.isEmpty())
+							continue;
+						for(Transition tr:incomingTransitions){				
+							boolean isEmpty = collectionHelper
+									.intersection(Arrays.stream(tr.getActions()).collect(Collectors.toSet()), leftActions)
+									.isEmpty();
+							if(isEmpty){
+								cnt++;					
+							}				
+						}
+						if(cnt == incomingTransitions.size())
+							postsToRemove.add(p);
+					}
+				}	
+			
+				posts.removeAll(postsToRemove);
 				posts.retainAll(reducedStates);
 				if(posts.isEmpty())
 					statesToRemove.add(state);

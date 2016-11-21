@@ -18,7 +18,7 @@
          {
             "init": false,
             "name": "s4",
-            "label": ["w2"]
+            "label": ["w1","w2"]
         },
         {
             "init": false,
@@ -33,12 +33,12 @@
          {
             "init": false,
             "name": "s7",
-            "label": ["w2"]
+            "label": ["w1","w2"]
         },
         {
             "init": false,
             "name": "s8",
-            "label": ["c2"]
+            "label": ["c2","w1"]
         },
         {
             "init": false,
