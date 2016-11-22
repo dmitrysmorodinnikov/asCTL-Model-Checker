@@ -34,7 +34,6 @@ public class SimpleModelChecker implements ModelChecker {
     	
     	//Get the ENF form of the query
     	StateFormula enfQuery = enfGenerator.getENF(finalQuery);
-    	//System.out.println("ENF Query: " + enfQuery);
     	
         //Get the set of states that satisfy the formula
     	Set<State> sat = satCalculator.getSat(enfQuery, model.getStatesSet());
