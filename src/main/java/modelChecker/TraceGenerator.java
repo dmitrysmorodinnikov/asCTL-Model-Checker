@@ -24,13 +24,20 @@ import model.Model;
 import model.State;
 import model.Transition;
 
-
+/**
+ * Generates a counterexample trace
+ */
 public class TraceGenerator {
 	
 	private SubsetCalculator satCalculator;
 	private ENFGenerator enfGenerator;
 	private CollectionHelper helper;
 
+	/**
+	 * Class constructor
+	 * @param satCalculator Calculator of the sat sets for asCTL formulae
+	 * @param enfGenerator Generates the ENF equivalent of asCTL
+	 */
 	public TraceGenerator(SubsetCalculator satCalculator, ENFGenerator enfGenerator) {
 		this.satCalculator = satCalculator;
 		this.enfGenerator = enfGenerator;
@@ -38,26 +45,21 @@ public class TraceGenerator {
 	}
 	
 	/**
-	 * Gets a counterexample for the query
-	 * @param model
-	 * @param constraint
+	 * Gets a counterexample for a query known to not hold in a model
+	 * @param model Model to use
+	 * @param constraint Fairness constraint
 	 * @param query Assumed to be ENF
-	 * @param sat
+	 * @param sat Set of states that satisfy the query
 	 * @return
 	 */
 	public String[] getCounterExample(Model model, StateFormula originalQuery, StateFormula enfQuery, Set<State> sat) {
 		
 		ArrayList<String> result = new ArrayList<String>();
-		//printSet(model.getStatesSet(), "Model States");
-//		printSet(model.getInitialStates(), "Initial States");
-//		printSet(sat, "Sat");
 		
 		//Get the initial states that don't satisfy the formula
 		Set<State> initialNotSat = new HashSet<State>();
 		initialNotSat.addAll(model.getInitialStates());
 		initialNotSat.removeAll(sat);
-		
-		//printSet(initialNotSat, "Initial not Sat");
 		
 		//If it is ForAll Until, return a counterexample for it (instead of the ENF formula)
 		if (originalQuery instanceof ForAll){
@@ -132,6 +134,14 @@ public class TraceGenerator {
 		return result.toArray(new String[result.size()]);
 	}
 	
+	/**
+	 * Gets a counterexample for the Next operator
+	 * @param model
+	 * @param initialNotSat
+	 * @param stateFormulaNext
+	 * @param actions
+	 * @return
+	 */
 	private ArrayList<String> getNextCounterExample(Model model, Set<State> initialNotSat, StateFormula stateFormulaNext, Set<String> actions){
 		ArrayList<String> counterExample = new ArrayList<String>();
 		//Take one of the initial states that does not satisfy the formula
@@ -149,7 +159,6 @@ public class TraceGenerator {
 		}
 		
 		//Remove from post those that satisfy the result
-		//post = model.getPostCollection(initialState);
 		post.removeAll(nextSatisfy);
 		
 		counterExample.add(initialState.getName());
@@ -171,11 +180,20 @@ public class TraceGenerator {
 		return counterExample;
 	}
 	
+	/**
+	 * Gets a counterexample for the Until operator
+	 * @param satisfabilityFormula Formula for the states that satisfy the until 
+	 * @param invalidationFormula  Formula for the states that invalidate the until
+	 * @param model Model to use
+	 * @param leftActions Left actions of the Until operator
+	 * @param rightActions Right actions of the Until operator
+	 * @param initialNotSat Set of initial states that don't satisfy the formula
+	 * @return
+	 */
 	private ArrayList<String> getUntilCounterexample(StateFormula satisfabilityFormula, StateFormula invalidationFormula, Model model, Set<String> leftActions, Set<String> rightActions, Set<State> initialNotSat){
 		
 		Set<State> invalidationFormulaStates = this.satCalculator.getSat(new Not(invalidationFormula), model.getStatesSet());
 		Set<State> rightStates = this.satCalculator.getSat(invalidationFormula, model.getStatesSet());
-		
 		
 		//If there are actions, the invalidation set need to be extended to add those that satisfy the formula, but don't come from one of the actions
 		if (rightActions != null && rightActions.size() != 0){
@@ -186,22 +204,16 @@ public class TraceGenerator {
 			invalidationFormulaStates.addAll(satStates);
 		}
 		
-		//printSet(invalidationFormulaStates, "invalidationFormulaStates");
-		
 		//Create a new Graph, with only those transitions that originate 
 		//in states that satisfy left and not(right)
-		
 		Set<State> satisfabilityStates = this.satCalculator.getSat(satisfabilityFormula, model.getStatesSet());
 		
 		//If there are left actions in the formula, then we should only take into consideration those that
 		//satisfy the formula and have a valid suffix transition
 		if (leftActions != null && leftActions.size() != 0){
 			Set<State> suffixStates = this.satCalculator.getSatSuffix(satisfabilityStates, helper.cloneSet(rightStates), leftActions);
-			//Set<State> intersection = helper.intersection(satisfabilityStates, suffixStates);
 			satisfabilityStates.retainAll(suffixStates);
 		}
-		
-		//printSet(satisfabilityStates, "satisfabilityStates");
 		
 		//Create an array of the name of those states
 		ArrayList<String> satisfabilityStatesNames = new ArrayList<String>();
@@ -242,15 +254,5 @@ public class TraceGenerator {
 		
 		return counterex;
 	}
-	
-//	//Testing
-//    private void printSet(Set<State> set, String name){
-//    	System.out.println("-------SET "+name+"-------");
-//    	Iterator<State> it = set.iterator();
-//		while(it.hasNext()){
-//			System.out.println(it.next());
-//		}
-//		System.out.println("-------End SET-------");
-//    }
 
 }

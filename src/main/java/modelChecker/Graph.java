@@ -9,8 +9,14 @@ import java.util.Stack;
 import model.State;
 import model.Transition;
 
+/**
+ * Graph used to find counterexamples for Until operators
+ */
 public class Graph {
 	
+	/**
+	 * Initial nodes of the graph
+	 */
 	private ArrayList<Node> initialNodes;
 	
 	/**
@@ -49,18 +55,14 @@ public class Graph {
 			from.addChildren(edge);
 			to.addParents(edge);
 		}
-		//printGraph();
 	}
 	
-	private void printGraph(){
-		System.out.println("$$$$$$$$$$$$$$ Generated Graph: ");
-		Iterator<String> keys = hashNodes.keySet().iterator();
-		while(keys.hasNext()){
-			System.out.println(hashNodes.get(keys.next()));
-		}
-		System.out.println("$$$$$$$$$$$$$$");
-	}
-
+	/**
+	 * Gets a counterexample for the Until operator
+	 * @param terminalCounterexStates States that invalidate the formula
+	 * @param initialNotSat States that don't satisfy the Until in the initial state
+	 * @return
+	 */
 	public ArrayList<String> getUntilCounterexample(Set<State> terminalCounterexStates, Set<State> initialNotSat) {
 		
 		ArrayList<String> result = new ArrayList<String>();
@@ -121,7 +123,7 @@ public class Graph {
 					loopFound = true;
 					counterexFound = true;
 				}
-				
+				//If a counterexample is found, return the path and finish the algorithm
 				if (counterexFound){
 					while(!stackPath.isEmpty()){
 						Object pop = stackPath.pop();

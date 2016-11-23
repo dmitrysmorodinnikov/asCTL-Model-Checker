@@ -1,5 +1,8 @@
 package modelChecker;
 
+/**
+ * Represents an Edge on a graph used to find counter examples
+ */
 public class Edge {
 	
 	private static int edgeCount = 0;

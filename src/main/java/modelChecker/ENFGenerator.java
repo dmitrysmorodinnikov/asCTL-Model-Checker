@@ -18,12 +18,16 @@ import formula.stateFormula.ThereExists;
 
 /**
  * 
- * Generates the ENF 
+ * Generates the ENF equivalent of a formula
  *
  */
 public class ENFGenerator {
 	
-	
+	/**
+	 * Returns the ENF equivalent of an asCTL formula
+	 * @param formula
+	 * @return
+	 */
 	public StateFormula getENF(StateFormula formula){
 		
 		if (formula instanceof AtomicProp){
@@ -204,25 +208,4 @@ public class ENFGenerator {
 		}
 		return null;
 	}
-	
-//	public static void main(String[] args){
-//		
-//		ENFGenerator generator = new ENFGenerator();
-//		
-//		StateFormula atomic = new AtomicProp("a");
-//		StateFormula atomic1 = new AtomicProp("b");
-//		
-//		//true test
-//		//StateFormula test = new BoolProp(false);
-//		
-//		//StateFormula test = new Not(atomic);
-//		//StateFormula test = new ForAll(new Next(atomic, new HashSet<String>()));
-//		//StateFormula test = new Or(atomic, atomic1);
-//		StateFormula test = new ThereExists(new Eventually(atomic, new HashSet<String>(), new HashSet<String>()));
-//		
-//		System.out.println("Original:  " + test);
-//		System.out.println("Result:  " + generator.getENF(test));
-//	}
-	
-	
 }

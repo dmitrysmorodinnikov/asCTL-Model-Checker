@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import model.State;
 
+/**
+ * Node class for the counterexamples graph
+ */
 public class Node {
 	
 	private State state;
@@ -12,6 +15,10 @@ public class Node {
 	private int depth;
 	private boolean visited;
 	
+	/**
+	 * Class constructor
+	 * @param state
+	 */
 	public Node(State state){
 		this.state = state;
 		this.edgesToThis = new ArrayList<Edge>();
@@ -47,20 +54,6 @@ public class Node {
 	
 	public String toString(){
 		return state.toString();
-//		String res = "";
-//		if (state.isInit()){
-//			res+="Initial ";
-//		}
-//		res+=  "Node: " + state;
-//		res+= ". Parents:";
-//		for (Edge e : edgesToThis){
-//			res+=" " + e.getFrom().getState();
-//		}
-//		res+= ". Children:";
-//		for (Edge e : edgesFromThis){
-//			res+=" " + e.getTo().getState();
-//		}
-//		return res;
 	}
 
 	public boolean isVisited() {
