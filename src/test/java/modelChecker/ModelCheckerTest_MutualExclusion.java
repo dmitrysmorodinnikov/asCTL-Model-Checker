@@ -52,6 +52,8 @@ public class ModelCheckerTest_MutualExclusion {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
+			System.out.print("test3 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -112,7 +114,8 @@ public class ModelCheckerTest_MutualExclusion {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
-			
+			System.out.print("test7 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -127,7 +130,8 @@ public class ModelCheckerTest_MutualExclusion {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, null, formula);
 			assertFalse(actualOuput);
-			
+			System.out.print("test8 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -173,6 +177,8 @@ public class ModelCheckerTest_MutualExclusion {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, constraint, formula);
 			assertFalse(actualOuput);
+			System.out.print("test11 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -190,7 +196,8 @@ public class ModelCheckerTest_MutualExclusion {
 			SimpleModelChecker modelCheker = new SimpleModelChecker(calculator);
 			boolean actualOuput = modelCheker.check(model, constraint, formula);
 			assertFalse(actualOuput);
-			
+			System.out.print("test12 Counterexample: ");
+			System.out.println(modelCheker.getTraceString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
