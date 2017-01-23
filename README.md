@@ -15,6 +15,10 @@ reach a goal state by only performing legal actions*.
 
 Full task description (including formal definition of *asCTL* logic) is in "/doc/TaskDescription.pdf".
 
+##How to encode logic formulas and models in a parser-friendly form?
+One of the core components of the system is the "Formula Parser" which essentially converts raw logic formula to the grammar tree.
+The rules of how to encode valid logic formulas and valid models in Json format are listed and explained in "/doc/Input_Specification.pdf". 
+
 ##Outcome
 As a result of this project, a model checker for *asCTL* was designed and fully
 implemented. Given a transition system and *asCTL* formula, a model checker computes whether
